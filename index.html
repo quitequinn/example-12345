@@ -1,0 +1,59 @@
+<div class="cursor"></div>
+
+<style>
+   html {
+      cursor: none;
+      background: #f00;
+   }
+   .cursor {
+      width: 16.8px;
+      height: 24px;
+      left: 0;
+      top: 0;
+      transform: translateX(-18%) translateY(-10%);
+      position: fixed;
+      background-image: url("https://miro.medium.com/max/560/0*oa0XcvM99Y5clDsj.png");
+      background-size: 100% 100%;
+      background-repeat: no-repeat;
+      will-change: top, left, width, height;
+      transition: top 0.001s, left 0.001s, width 0.5s, height 0.5s;
+   }
+</style>
+
+<script>
+   function throttle (callback, limit) {
+      var waiting = false;                         // Initially, we're not waiting
+      return function () {                         // We return a throttled function
+         if (!waiting) {                           // If we're not waiting
+               callback.apply(this, arguments);    // Execute users function
+               waiting = true;                     // Prevent future invocations
+               setTimeout(function () {            // After a period of time
+                  waiting = false;                 // And allow future invocations
+               }, limit);
+         }
+      }
+   }
+
+   var distance = 0;
+   var x = y = 0;
+   var cursor = document.getElementsByClassName("cursor")[0];
+   window.addEventListener("mousemove", throttle(function(){mouseEvent(event)}, 40));
+                           
+   function mouseEvent(event){
+      
+      var lastX = x;
+      var lastY = y;
+      x = event.clientX;
+      y = event.clientY;
+      distance += Math.hypot(x - lastX, y - lastY);
+      cursor.style.top = y + "px";
+      cursor.style.left = x + "px";
+   };
+
+   setInterval(function(){
+      cursor.style.width = (28*0.6)+((28*0.6)*distance) + "px";
+      cursor.style.height = (40*0.6)+((40*0.6)*distance) + "px";
+      distance = 0;
+   }, 50);
+
+</script>
